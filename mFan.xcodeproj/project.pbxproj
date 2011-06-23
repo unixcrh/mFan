@@ -1,0 +1,476 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4AD0040A13B36F7100486CBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD0040913B36F7100486CBF /* UIKit.framework */; };
+		4AD0040C13B36F7100486CBF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD0040B13B36F7100486CBF /* Foundation.framework */; };
+		4AD0040E13B36F7100486CBF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD0040D13B36F7100486CBF /* CoreGraphics.framework */; };
+		4AD0041413B36F7100486CBF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4AD0041213B36F7100486CBF /* InfoPlist.strings */; };
+		4AD0041713B36F7100486CBF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0041613B36F7100486CBF /* main.m */; };
+		4AD0041A13B36F7100486CBF /* mFanAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0041913B36F7100486CBF /* mFanAppDelegate.m */; };
+		4AD0041D13B36F7100486CBF /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AD0041B13B36F7100486CBF /* MainWindow.xib */; };
+		4AD0042013B36F7100486CBF /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0041F13B36F7100486CBF /* FirstViewController.m */; };
+		4AD0042313B36F7100486CBF /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0042213B36F7100486CBF /* SecondViewController.m */; };
+		4AD0042613B36F7100486CBF /* FirstView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AD0042413B36F7100486CBF /* FirstView.xib */; };
+		4AD0042913B36F7100486CBF /* SecondView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4AD0042713B36F7100486CBF /* SecondView.xib */; };
+		4AD0043013B36F7100486CBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD0040913B36F7100486CBF /* UIKit.framework */; };
+		4AD0043113B36F7100486CBF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD0040B13B36F7100486CBF /* Foundation.framework */; };
+		4AD0043213B36F7100486CBF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AD0040D13B36F7100486CBF /* CoreGraphics.framework */; };
+		4AD0043A13B36F7100486CBF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4AD0043813B36F7100486CBF /* InfoPlist.strings */; };
+		4AD0043D13B36F7100486CBF /* mFanTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 4AD0043C13B36F7100486CBF /* mFanTests.h */; };
+		4AD0043F13B36F7100486CBF /* mFanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AD0043E13B36F7100486CBF /* mFanTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4AD0043313B36F7100486CBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4AD003FC13B36F7000486CBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4AD0040413B36F7100486CBF;
+			remoteInfo = mFan;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4AD0040513B36F7100486CBF /* mFan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mFan.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AD0040913B36F7100486CBF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		4AD0040B13B36F7100486CBF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		4AD0040D13B36F7100486CBF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		4AD0041113B36F7100486CBF /* mFan-Info.plist */ = {isa = PBXFileReference; path = "mFan-Info.plist"; sourceTree = "<group>"; };
+		4AD0041313B36F7100486CBF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4AD0041513B36F7100486CBF /* mFan-Prefix.pch */ = {isa = PBXFileReference; path = "mFan-Prefix.pch"; sourceTree = "<group>"; };
+		4AD0041613B36F7100486CBF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		4AD0041813B36F7100486CBF /* mFanAppDelegate.h */ = {isa = PBXFileReference; path = mFanAppDelegate.h; sourceTree = "<group>"; };
+		4AD0041913B36F7100486CBF /* mFanAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mFanAppDelegate.m; sourceTree = "<group>"; };
+		4AD0041C13B36F7100486CBF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		4AD0041E13B36F7100486CBF /* FirstViewController.h */ = {isa = PBXFileReference; path = FirstViewController.h; sourceTree = "<group>"; };
+		4AD0041F13B36F7100486CBF /* FirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
+		4AD0042113B36F7100486CBF /* SecondViewController.h */ = {isa = PBXFileReference; path = SecondViewController.h; sourceTree = "<group>"; };
+		4AD0042213B36F7100486CBF /* SecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
+		4AD0042513B36F7100486CBF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/FirstView.xib; sourceTree = "<group>"; };
+		4AD0042813B36F7100486CBF /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/SecondView.xib; sourceTree = "<group>"; };
+		4AD0042F13B36F7100486CBF /* mFanTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mFanTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AD0043713B36F7100486CBF /* mFanTests-Info.plist */ = {isa = PBXFileReference; path = "mFanTests-Info.plist"; sourceTree = "<group>"; };
+		4AD0043913B36F7100486CBF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4AD0043B13B36F7100486CBF /* mFanTests-Prefix.pch */ = {isa = PBXFileReference; path = "mFanTests-Prefix.pch"; sourceTree = "<group>"; };
+		4AD0043C13B36F7100486CBF /* mFanTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mFanTests.h; sourceTree = "<group>"; };
+		4AD0043E13B36F7100486CBF /* mFanTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mFanTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4AD0040213B36F7100486CBF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AD0040A13B36F7100486CBF /* UIKit.framework in Frameworks */,
+				4AD0040C13B36F7100486CBF /* Foundation.framework in Frameworks */,
+				4AD0040E13B36F7100486CBF /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4AD0042B13B36F7100486CBF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AD0043013B36F7100486CBF /* UIKit.framework in Frameworks */,
+				4AD0043113B36F7100486CBF /* Foundation.framework in Frameworks */,
+				4AD0043213B36F7100486CBF /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4AD003FA13B36F7000486CBF = {
+			isa = PBXGroup;
+			children = (
+				4AD0040F13B36F7100486CBF /* mFan */,
+				4AD0043513B36F7100486CBF /* mFanTests */,
+				4AD0040813B36F7100486CBF /* Frameworks */,
+				4AD0040613B36F7100486CBF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4AD0040613B36F7100486CBF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4AD0040513B36F7100486CBF /* mFan.app */,
+				4AD0042F13B36F7100486CBF /* mFanTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4AD0040813B36F7100486CBF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4AD0040913B36F7100486CBF /* UIKit.framework */,
+				4AD0040B13B36F7100486CBF /* Foundation.framework */,
+				4AD0040D13B36F7100486CBF /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4AD0040F13B36F7100486CBF /* mFan */ = {
+			isa = PBXGroup;
+			children = (
+				4AD0041813B36F7100486CBF /* mFanAppDelegate.h */,
+				4AD0041913B36F7100486CBF /* mFanAppDelegate.m */,
+				4AD0041B13B36F7100486CBF /* MainWindow.xib */,
+				4AD0041E13B36F7100486CBF /* FirstViewController.h */,
+				4AD0041F13B36F7100486CBF /* FirstViewController.m */,
+				4AD0042113B36F7100486CBF /* SecondViewController.h */,
+				4AD0042213B36F7100486CBF /* SecondViewController.m */,
+				4AD0042413B36F7100486CBF /* FirstView.xib */,
+				4AD0042713B36F7100486CBF /* SecondView.xib */,
+				4AD0041013B36F7100486CBF /* Supporting Files */,
+			);
+			path = mFan;
+			sourceTree = "<group>";
+		};
+		4AD0041013B36F7100486CBF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4AD0041113B36F7100486CBF /* mFan-Info.plist */,
+				4AD0041213B36F7100486CBF /* InfoPlist.strings */,
+				4AD0041513B36F7100486CBF /* mFan-Prefix.pch */,
+				4AD0041613B36F7100486CBF /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4AD0043513B36F7100486CBF /* mFanTests */ = {
+			isa = PBXGroup;
+			children = (
+				4AD0043C13B36F7100486CBF /* mFanTests.h */,
+				4AD0043E13B36F7100486CBF /* mFanTests.m */,
+				4AD0043613B36F7100486CBF /* Supporting Files */,
+			);
+			path = mFanTests;
+			sourceTree = "<group>";
+		};
+		4AD0043613B36F7100486CBF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4AD0043713B36F7100486CBF /* mFanTests-Info.plist */,
+				4AD0043813B36F7100486CBF /* InfoPlist.strings */,
+				4AD0043B13B36F7100486CBF /* mFanTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4AD0040413B36F7100486CBF /* mFan */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4AD0044213B36F7100486CBF /* Build configuration list for PBXNativeTarget "mFan" */;
+			buildPhases = (
+				4AD0040113B36F7100486CBF /* Sources */,
+				4AD0040213B36F7100486CBF /* Frameworks */,
+				4AD0040313B36F7100486CBF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mFan;
+			productName = mFan;
+			productReference = 4AD0040513B36F7100486CBF /* mFan.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4AD0042E13B36F7100486CBF /* mFanTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4AD0044513B36F7100486CBF /* Build configuration list for PBXNativeTarget "mFanTests" */;
+			buildPhases = (
+				4AD0042A13B36F7100486CBF /* Sources */,
+				4AD0042B13B36F7100486CBF /* Frameworks */,
+				4AD0042C13B36F7100486CBF /* Resources */,
+				4AD0042D13B36F7100486CBF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4AD0043413B36F7100486CBF /* PBXTargetDependency */,
+			);
+			name = mFanTests;
+			productName = mFanTests;
+			productReference = 4AD0042F13B36F7100486CBF /* mFanTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4AD003FC13B36F7000486CBF /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 4AD003FF13B36F7000486CBF /* Build configuration list for PBXProject "mFan" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4AD003FA13B36F7000486CBF;
+			productRefGroup = 4AD0040613B36F7100486CBF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4AD0040413B36F7100486CBF /* mFan */,
+				4AD0042E13B36F7100486CBF /* mFanTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4AD0040313B36F7100486CBF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AD0041413B36F7100486CBF /* InfoPlist.strings in Resources */,
+				4AD0041D13B36F7100486CBF /* MainWindow.xib in Resources */,
+				4AD0042613B36F7100486CBF /* FirstView.xib in Resources */,
+				4AD0042913B36F7100486CBF /* SecondView.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4AD0042C13B36F7100486CBF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AD0043A13B36F7100486CBF /* InfoPlist.strings in Resources */,
+				4AD0043D13B36F7100486CBF /* mFanTests.h in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4AD0042D13B36F7100486CBF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4AD0040113B36F7100486CBF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AD0041713B36F7100486CBF /* main.m in Sources */,
+				4AD0041A13B36F7100486CBF /* mFanAppDelegate.m in Sources */,
+				4AD0042013B36F7100486CBF /* FirstViewController.m in Sources */,
+				4AD0042313B36F7100486CBF /* SecondViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4AD0042A13B36F7100486CBF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AD0043F13B36F7100486CBF /* mFanTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4AD0043413B36F7100486CBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4AD0040413B36F7100486CBF /* mFan */;
+			targetProxy = 4AD0043313B36F7100486CBF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		4AD0041213B36F7100486CBF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4AD0041313B36F7100486CBF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		4AD0041B13B36F7100486CBF /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4AD0041C13B36F7100486CBF /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		4AD0042413B36F7100486CBF /* FirstView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4AD0042513B36F7100486CBF /* en */,
+			);
+			name = FirstView.xib;
+			sourceTree = "<group>";
+		};
+		4AD0042713B36F7100486CBF /* SecondView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4AD0042813B36F7100486CBF /* en */,
+			);
+			name = SecondView.xib;
+			sourceTree = "<group>";
+		};
+		4AD0043813B36F7100486CBF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4AD0043913B36F7100486CBF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4AD0044013B36F7100486CBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		4AD0044113B36F7100486CBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		4AD0044313B36F7100486CBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "mFan/mFan-Prefix.pch";
+				INFOPLIST_FILE = "mFan/mFan-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4AD0044413B36F7100486CBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "mFan/mFan-Prefix.pch";
+				INFOPLIST_FILE = "mFan/mFan-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		4AD0044613B36F7100486CBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/mFan.app/mFan";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "mFanTests/mFanTests-Prefix.pch";
+				INFOPLIST_FILE = "mFanTests/mFanTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		4AD0044713B36F7100486CBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/mFan.app/mFan";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "mFanTests/mFanTests-Prefix.pch";
+				INFOPLIST_FILE = "mFanTests/mFanTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4AD003FF13B36F7000486CBF /* Build configuration list for PBXProject "mFan" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4AD0044013B36F7100486CBF /* Debug */,
+				4AD0044113B36F7100486CBF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4AD0044213B36F7100486CBF /* Build configuration list for PBXNativeTarget "mFan" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4AD0044313B36F7100486CBF /* Debug */,
+				4AD0044413B36F7100486CBF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		4AD0044513B36F7100486CBF /* Build configuration list for PBXNativeTarget "mFanTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4AD0044613B36F7100486CBF /* Debug */,
+				4AD0044713B36F7100486CBF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4AD003FC13B36F7000486CBF /* Project object */;
+}
