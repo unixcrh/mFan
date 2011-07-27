@@ -7,20 +7,102 @@
 //
 
 #import "mFanAppDelegate.h"
+#import "NavigationRotateController.h"
+#import "MGTwitterEngine.h"
+#import "HomeViewController.h"
+#import "LoginController.h"
+#import "RepliesListController.h"
+#import "DirectMessagesController.h"
+#import "FollowersController.h"
+
+
+static int NetworkActivityIndicatorCounter = 0;
 
 @implementation mFanAppDelegate
 
 
-@synthesize window=_window;
+@synthesize window;
 
-@synthesize tabBarController=_tabBarController;
+@synthesize tabBarController;
+
+
+- (UINavigationController *)createNavControllerWrappingViewControllerOfClass:(Class)cntrloller 
+                                                                     nibName:(NSString*)nibName 
+                                                                 tabIconName:(NSString*)iconName
+                                                                    tabTitle:(NSString*)tabTitle
+{
+	UIViewController* viewController = [[cntrloller alloc] initWithNibName:nibName bundle:nil];
+	
+	NavigationRotateController *theNavigationController;
+	theNavigationController = [[NavigationRotateController alloc] initWithRootViewController:viewController];
+	viewController.tabBarItem.image = [UIImage imageNamed:iconName];
+	viewController.title = NSLocalizedString(tabTitle, @""); 
+	[viewController release];
+	
+	return theNavigationController;
+}
+
+- (void)setupPortraitUserInterface 
+{
+	UINavigationController *localNavigationController;
+	
+    // **************  Test 1 Capacity ******
+	NSMutableArray *localViewControllersArray = [[NSMutableArray alloc] initWithCapacity:1];
+     
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[HomeViewController class] nibName:nil tabIconName:@"HomeTabIcon.tiff" tabTitle:@"Home"];
+	[localViewControllersArray addObject:localNavigationController];
+	[localNavigationController  release];
+	if([MGTwitterEngine username] == nil)
+		[LoginController showModeless:localNavigationController animated:NO];
+    
+    localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[RepliesListController class] nibName:@"UserMessageList" tabIconName:@"Replies.tiff" tabTitle:@"Replies"];
+	[localViewControllersArray addObject:localNavigationController];
+	[localNavigationController release];
+	
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[DirectMessagesController class] nibName:@"UserMessageList" tabIconName:@"Messages.tiff" tabTitle:@"Messages"];
+	[localViewControllersArray addObject:localNavigationController];
+	[localNavigationController release];
+	
+	/*localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[TweetQueueController class] nibName:@"TweetQueue" tabIconName:@"Queue.tiff" tabTitle:[TweetQueueController queueTitle]];
+	[localViewControllersArray addObject:localNavigationController];
+	[localNavigationController release]; */
+    
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[FollowersController class] nibName:@"UserMessageList" tabIconName:@"followers.tiff" tabTitle:@"Followers"];
+	[localViewControllersArray addObject:localNavigationController];
+	[localNavigationController release];
+	
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[FollowingController class] nibName:@"UserMessageList" tabIconName:@"following.tiff" tabTitle:@"Following"];
+	[localViewControllersArray addObject:localNavigationController];
+	[localNavigationController release];
+	
+	/*localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[SettingsController class] nibName:@"SettingsView" tabIconName:@"SettingsTabIcon.tiff" tabTitle:@"Settings"];
+	[localViewControllersArray addObject:localNavigationController];
+	[localNavigationController release];
+	
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[AboutController class] nibName:@"About" tabIconName:@"About.tiff" tabTitle:@"About"];
+	[localViewControllersArray addObject:localNavigationController];
+	[localNavigationController release]; */
+	
+	tabBarController.viewControllers = localViewControllersArray;
+	
+	[localViewControllersArray release];
+	
+}
+
+
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
     // Add the tab bar controller's current view as a subview of the window
-    self.window.rootViewController = self.tabBarController;
-    [self.window makeKeyAndVisible];
+    
+	[self setupPortraitUserInterface];
+    [window addSubview:tabBarController.view];
+    
+	// [[LocationManager locationManager] startUpdates];
+	
+	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     return YES;
 }
 
@@ -65,10 +147,23 @@
 
 - (void)dealloc
 {
-    [_window release];
-    [_tabBarController release];
+    [tabBarController release];
+    [window release];
     [super dealloc];
 }
+
++ (void) increaseNetworkActivityIndicator
+{
+	NetworkActivityIndicatorCounter++;
+	[UIApplication sharedApplication].networkActivityIndicatorVisible = NetworkActivityIndicatorCounter > 0;
+}
+
++ (void) decreaseNetworkActivityIndicator
+{
+	NetworkActivityIndicatorCounter--;
+	[UIApplication sharedApplication].networkActivityIndicatorVisible = NetworkActivityIndicatorCounter > 0;
+}
+
 
 /*
 // Optional UITabBarControllerDelegate method.

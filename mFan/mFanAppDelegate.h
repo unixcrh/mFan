@@ -9,8 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @interface mFanAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate> {
+    UIWindow *window;
+    UITabBarController *tabBarController;
 
 }
+
++ (void) increaseNetworkActivityIndicator;
++ (void) decreaseNetworkActivityIndicator;
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 
