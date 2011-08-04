@@ -123,8 +123,8 @@
 		return;
 	}
 	
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"The message is not sent" message:@"Your changes will be lost"
-												   delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"私信将不会发送" message:@"你的改动将会作废"
+												   delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
 	[alert show];
 	[alert release];
 		
@@ -155,8 +155,8 @@
 	[cancelButton setEnabled:YES];
 	
 	[mFanAppDelegate decreaseNetworkActivityIndicator];
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failed!" message:[error localizedDescription]
-												   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"失败!" message:[error localizedDescription]
+												   delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
 	[alert show];	
 	[alert release];
 }
@@ -165,7 +165,7 @@
 - (void)setUser:(NSString*)user
 {
 	_user = [user retain];
-	toField.text = [NSString stringWithFormat:@"Direct Message to %@", _user];
+	toField.text = [NSString stringWithFormat:@"发私信给 %@", _user];
 }
 
 

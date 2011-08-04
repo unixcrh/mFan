@@ -31,6 +31,10 @@
 #include "util.h"
 
 
+#define PROCESSING_PHOTO_SHEET_TAG										3
+
+#define K_UI_TYPE_IMAGE													@"public.image"
+#define PHOTO_Q_SHEET_TAG												436
 
 
 
@@ -41,6 +45,9 @@
 @synthesize progressSheet;
 @synthesize connectionDelegate;
 @synthesize _message;
+@synthesize pickedPhoto;
+@synthesize imageView;
+
 
 
 - (void)setCharsCount
@@ -51,13 +58,21 @@
 
 - (void) setNavigatorButtons
 {
+    if (pickedPhoto) {
+        CGRect newframe = CGRectMake(112, 0, 208, 200);
+        messageText.frame = newframe;
+    } else {
+        CGRect oframe = CGRectMake(0, 0, 320, 200);
+        messageText.frame = oframe;
+    }
+    
 	if(self.navigationItem.leftBarButtonItem != cancelButton)
 	{
 		[[self navigationItem] setLeftBarButtonItem:cancelButton animated:YES];
 		if([self.navigationController.viewControllers count] == 1)
-			cancelButton.title = NSLocalizedString(@"Clear", @"");
+			cancelButton.title = NSLocalizedString(@"清楚", @"");
 		else
-			cancelButton.title = NSLocalizedString(@"Cancel", @"");
+			cancelButton.title = NSLocalizedString(@"取消", @"");
 	}	
 		
 	if([[messageText.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length])
@@ -83,11 +98,11 @@
 
 
 
-
 - (void)initData
 {
 	_twitter = [[MGTwitterEngine alloc] initWithDelegate:self];
 	inTextEditingMode = NO;
+    isRT = NO;
 	messageTextWillIgnoreNextViewAppearing = NO;
 	twitWasChangedManually = NO;
 }
@@ -125,10 +140,14 @@
 	[_twitter release];
 
 	[_indicator release];
+    
+    
 
 	[defaultTintColor release];
-	self.connectionDelegate = nil;
+    self.connectionDelegate = nil;
+    self.pickedPhoto = nil;
 	self._message = nil;
+    self.imageView = nil;
 	[self dismissProgressSheetIfExist];
     [super dealloc];
 }
@@ -141,8 +160,103 @@
 		return;
 
 
-	NSString *messageBody = messageText.text;
 }
+
+
+- (void)setImageImage:(UIImage*)newImage
+{
+    
+	imageView.image = newImage;
+    imageView.hidden = NO;
+	[self setNavigatorButtons];
+}
+
+
+- (void) setImage:(UIImage*)img
+{
+	self.pickedPhoto = img;
+	UIImage* prevImage = nil;
+	prevImage = img;
+	[self setImageImage:prevImage];
+}
+
+
+
+
+#pragma mark ImagePicker method
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+	messageTextWillIgnoreNextViewAppearing = YES;
+	[[picker parentViewController] dismissModalViewControllerAnimated:YES];
+	[messageText becomeFirstResponder];
+	[self setNavigatorButtons];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishWithPickingPhoto:(UIImage *)img
+{
+    //img = nil;
+    //url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"TestYfrog" ofType:@"mov"]];
+    
+	[[picker parentViewController] dismissModalViewControllerAnimated:YES];
+	twitWasChangedManually = YES;
+	messageTextWillIgnoreNextViewAppearing = YES;
+    
+	BOOL startNewUpload = NO;
+    
+	if(pickedPhoto != img)
+	{
+		startNewUpload = YES;
+		[self setImage:img];
+	}
+    
+	[self setNavigatorButtons];
+    
+	if(startNewUpload)
+	{
+		if(self.connectionDelegate)
+			[self.connectionDelegate cancel];
+		self.connectionDelegate = nil;
+	}
+    
+	[messageText becomeFirstResponder];
+	
+	if(img)
+	{
+		BOOL needToResize;
+		BOOL needToRotate;
+		isImageNeedToConvert(img, &needToResize, &needToRotate);
+		if(needToResize || needToRotate)
+		{
+			self.progressSheet = ShowActionSheet(NSLocalizedString(@"优化图片...", @""), self, nil, self.tabBarController.view);
+			self.progressSheet.tag = PROCESSING_PHOTO_SHEET_TAG;
+		}
+	}
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+	
+	if([[info objectForKey:@"UIImagePickerControllerMediaType"] isEqualToString:K_UI_TYPE_IMAGE])
+		[self imagePickerController:picker didFinishWithPickingPhoto:[info objectForKey:@"UIImagePickerControllerOriginalImage"]];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)img editingInfo:(NSDictionary *)editInfo 
+{
+	[self imagePickerController:picker didFinishWithPickingPhoto:img];
+}
+
+
+- (void)imageViewTouched:(NSNotification*)notification
+{
+	if(pickedPhoto)
+	{
+		/*UIViewController *imgViewCtrl = [[ImageViewController alloc] initWithImage:pickedPhoto];
+		[self.navigationController pushViewController:imgViewCtrl animated:YES];
+		[imgViewCtrl release];*/
+	}
+}
+
 
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -150,25 +264,39 @@
 {
     [super viewDidLoad];
 	UIBarButtonItem *temporaryBarButtonItem = [[UIBarButtonItem alloc] init];
-	temporaryBarButtonItem.title = NSLocalizedString(@"Back", @"");
+	temporaryBarButtonItem.title = NSLocalizedString(@"返回", @"");
 	self.navigationItem.backBarButtonItem = temporaryBarButtonItem;
 	[temporaryBarButtonItem release];
 	
-	self.navigationItem.title = NSLocalizedString(@"New Tweet", @"");
+	self.navigationItem.title = NSLocalizedString(@"写消息", @"");
 
 	messageText.delegate = self;
+    
+    BOOL cameraEnabled = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+	BOOL libraryEnabled = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
+	if(!cameraEnabled && !libraryEnabled)
+		[pickImage setEnabled:NO];
+	
+    
 
 
 	[messageText becomeFirstResponder];
 	inTextEditingMode = YES;
+    imageView.hidden = YES;
 	
 	_indicatorCount = 0;
 	_indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 
 	[self setNavigatorButtons];
 	
-	NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+	//[notificationCenter addObserver:self selector:@selector(imageViewTouched:) name:@"ImageViewTouched" object:image];
 	[notificationCenter addObserver:self selector:@selector(appWillTerminate:) name:UIApplicationWillTerminateNotification object:nil];
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{	
+	return MAX_SYMBOLS_COUNT_IN_TEXT_VIEW >= [textView.text length] - range.length + [text length];;
 }
 
 
@@ -214,6 +342,83 @@
 }
 
 
+- (NSArray*)availableMediaTypes:(UIImagePickerControllerSourceType) pickerSourceType
+{
+	SEL selector = @selector(availableMediaTypesForSourceType:);
+	NSMethodSignature *sig = [[UIImagePickerController class] methodSignatureForSelector:selector];
+	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
+	[invocation setTarget:[UIImagePickerController class]];
+	[invocation setSelector:selector];
+	[invocation setArgument:&pickerSourceType atIndex:2];
+	[invocation invoke];
+	NSArray *mediaTypes = nil;
+	[invocation getReturnValue:&mediaTypes];
+	return mediaTypes;
+}
+
+- (void)grabImage 
+{
+	BOOL imageAlreadyExists = [self mediaIsPicked];
+	BOOL photoCameraEnabled = NO;
+	BOOL photoLibraryEnabled = NO;
+	BOOL movieCameraEnabled = NO;
+    
+    
+	NSArray *mediaTypes = nil;
+    
+	if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
+	{
+		photoLibraryEnabled = YES;
+		if ([[UIImagePickerController class] respondsToSelector:@selector(availableMediaTypesForSourceType:)]) 
+		{
+			mediaTypes = [self availableMediaTypes:UIImagePickerControllerSourceTypePhotoLibrary];
+			photoLibraryEnabled = [mediaTypes indexOfObject:K_UI_TYPE_IMAGE] != NSNotFound;
+		}
+        
+	}
+	if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+	{
+		photoCameraEnabled = YES;
+        
+        
+		if ([[UIImagePickerController class] respondsToSelector:@selector(availableMediaTypesForSourceType:)]) 
+		{
+			mediaTypes = [self availableMediaTypes:UIImagePickerControllerSourceTypeCamera];
+			photoCameraEnabled = [mediaTypes indexOfObject:K_UI_TYPE_IMAGE] != NSNotFound;
+		}
+	}
+    
+	NSString *buttons[5] = {0};
+	int i = 0;
+	
+	if(photoCameraEnabled)
+		buttons[i++] = NSLocalizedString(@"拍照", @"");
+	if(movieCameraEnabled)
+		buttons[i++] = NSLocalizedString(@"录像", @"");
+	if(photoLibraryEnabled)
+		buttons[i++] = NSLocalizedString(@"本地图片", @"");
+    //	if(movieLibraryEnabled)
+    //		buttons[i++] = NSLocalizedString(@"Use video library", @"");
+	if(imageAlreadyExists)
+		buttons[i++] = NSLocalizedString(@"移除图片" , @"");
+	
+	UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+															 delegate:self cancelButtonTitle:NSLocalizedString(@"取消", @"") destructiveButtonTitle:nil
+													otherButtonTitles:buttons[0], buttons[1], buttons[2], buttons[3], buttons[4], nil];
+	actionSheet.actionSheetStyle = UIActionSheetStyleAutomatic;
+	actionSheet.tag = PHOTO_Q_SHEET_TAG;
+	[actionSheet showInView:self.tabBarController.view];
+	[actionSheet release];
+	
+}
+
+- (IBAction)attachImagesActions:(id)sender
+{
+	[self grabImage];
+}
+
+
+
 - (void)postImageAction 
 {
 	if(![[messageText.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length])
@@ -221,9 +426,9 @@
 
 	if([messageText.text length] > MAX_SYMBOLS_COUNT_IN_TEXT_VIEW)
 	{
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"You can not send message", @"") 
-														message:NSLocalizedString(@"Cant to send too long message", @"")
-													   delegate:nil cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"OK", @""), nil];
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"无法发送", @"") 
+														message:NSLocalizedString(@"消息太长了，亲！", @"")
+													   delegate:nil cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"确定", @""), nil];
 		[alert show];
 		[alert release];
 		return;
@@ -240,29 +445,104 @@
 	
 	NSString *messageBody = messageText.text;
     
+    if ([self mediaIsPicked]) {
+        
+    
+    
+   
+        NSData *imageData = UIImageJPEGRepresentation(pickedPhoto, 1.0f);
+        [mFanAppDelegate increaseNetworkActivityIndicator];
+        if(!self.progressSheet)
+            self.progressSheet = ShowActionSheet(NSLocalizedString(@"正在发送图片...", @""), self, NSLocalizedString(@"取消", @""), self.tabBarController.view);
+        
+        
+        NSString* mgTwitterConnectionID = nil;
+        mgTwitterConnectionID = [_twitter sendUpdate:messageBody imageData:imageData inReplyTo:0];
+        MGConnectionWrap * mgConnectionWrap = [[MGConnectionWrap alloc] initWithTwitter:_twitter connection:mgTwitterConnectionID delegate:self];
+        self.connectionDelegate = mgConnectionWrap;
+        [mgConnectionWrap release];
+        
+        
+        return;
+    
+    }
+    
 	[mFanAppDelegate increaseNetworkActivityIndicator];
 	if(!self.progressSheet)
-		self.progressSheet = ShowActionSheet(NSLocalizedString(@"Send twit on Twitter", @""), self, NSLocalizedString(@"Cancel", @""), self.tabBarController.view);
+		self.progressSheet = ShowActionSheet(NSLocalizedString(@"正在发送...", @""), self, NSLocalizedString(@"取消", @""), self.tabBarController.view);
 
 
 	NSString* mgTwitterConnectionID = nil;
-	if(_message)
-		mgTwitterConnectionID = [_twitter sendUpdate:messageBody inReplyTo:[[_message objectForKey:@"id"] intValue]];
-	else
-		mgTwitterConnectionID = [_twitter sendUpdate:messageBody];
+    
+        if(_message)
+            mgTwitterConnectionID = [_twitter sendUpdate:messageBody inReplyTo:[[_message objectForKey:@"id"] intValue]];
+        else
+            mgTwitterConnectionID = [_twitter sendUpdate:messageBody];
 		
-	MGConnectionWrap * mgConnectionWrap = [[MGConnectionWrap alloc] initWithTwitter:_twitter connection:mgTwitterConnectionID delegate:self];
-	self.connectionDelegate = mgConnectionWrap;
-	[mgConnectionWrap release];
+        MGConnectionWrap * mgConnectionWrap = [[MGConnectionWrap alloc] initWithTwitter:_twitter connection:mgTwitterConnectionID delegate:self];
+        self.connectionDelegate = mgConnectionWrap;
+        [mgConnectionWrap release];
+    
 
 	return;
 }
 
 
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	if(actionSheet.tag == PHOTO_Q_SHEET_TAG)
+	{
+		if(buttonIndex == actionSheet.cancelButtonIndex)
+			return;
+		
+		if([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:NSLocalizedString(@"移除图片", @"")])
+		{
+			twitWasChangedManually = YES;
+			[self setImage:nil];
+            imageView.hidden = YES;
+			if(connectionDelegate)
+				[connectionDelegate cancel];
+			return;
+		}
+		else if([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:NSLocalizedString(@"拍照", @"")])
+		{
+            UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+            imgPicker.delegate =self;
+			imgPicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+			if([imgPicker respondsToSelector:@selector(setMediaTypes:)])
+				[imgPicker performSelector:@selector(setMediaTypes:) withObject:[NSArray arrayWithObject:K_UI_TYPE_IMAGE]];
+			[self presentModalViewController:imgPicker animated:YES];
+            [imgPicker release];
+			return;
+		}
+        else if([[actionSheet buttonTitleAtIndex:buttonIndex] isEqualToString:NSLocalizedString(@"本地图片", @"")])
+		{
+            UIImagePickerController *imgPicker = [[UIImagePickerController alloc] init];
+            imgPicker.delegate =self;
+
+			imgPicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+			if([imgPicker respondsToSelector:@selector(setMediaTypes:)])
+				[imgPicker performSelector:@selector(setMediaTypes:) withObject:[self availableMediaTypes:UIImagePickerControllerSourceTypePhotoLibrary]];
+			[self presentModalViewController:imgPicker animated:YES];
+            [imgPicker release];
+			return;
+		}
+		
+	}
+	else
+	{
+		[self dismissProgressSheetIfExist];
+		if(connectionDelegate)
+			[connectionDelegate cancel];
+	}
+}
 
 
 - (void)setRetwit:(NSString*)body whose:(NSString*)username
 {
+    if (!isRT) {
+        isRT = YES;
+    }
 	if(username)
 		[self setMessageTextText:[NSString stringWithFormat:NSLocalizedString(@"转@%@ %@", @""), username, body]];
 	else
@@ -271,6 +551,10 @@
 
 - (void)setReplyToMessage:(NSDictionary*)message
 {
+    if (isRT) {
+        isRT = NO;
+    }
+    
 	self._message = message;
 	NSString *replyToUser = [[message objectForKey:@"user"] objectForKey:@"screen_name"];
 	[self setMessageTextText:[NSString stringWithFormat:@"@%@ ", replyToUser]];
@@ -291,7 +575,10 @@
 
 - (void)popController
 {
-	[self setImage:nil movie:nil];
+    [self setImage:nil];
+    if (!imageView.hidden) {
+        imageView.hidden = YES;
+    }
 	[self setMessageTextText:@""];
 	[self.navigationController popToRootViewControllerAnimated:YES];
 }
@@ -310,7 +597,9 @@
 {
 	[mFanAppDelegate decreaseNetworkActivityIndicator];
 	[self dismissProgressSheetIfExist];
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"TwittsUpdated" object: nil];
+    if (!isRT) {
+        [[NSNotificationCenter defaultCenter] postNotificationName: @"消息发送成功" object: nil];
+    } 
 	self.connectionDelegate = nil;
 	[self setMessageTextText:@""];
 	[messageText becomeFirstResponder];
@@ -325,8 +614,8 @@
 	[mFanAppDelegate decreaseNetworkActivityIndicator];
 	[self dismissProgressSheetIfExist];
 	self.connectionDelegate = nil;
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Failed!", @"") message:[error localizedDescription]
-												   delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles: nil];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"失败!", @"") message:[error localizedDescription]
+												   delegate:nil cancelButtonTitle:NSLocalizedString(@"确定", @"") otherButtonTitles: nil];
 	[alert show];	
 	[alert release];
 }
@@ -357,8 +646,8 @@
 		return;
 	}
 	
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"The message is not sent" message:@"Your changes will be lost"
-												   delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"消息将不会发送" message:@"你的改动将会作废"
+												   delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
 	[alert show];
 	[alert release];
 		
@@ -390,6 +679,15 @@
 		--_indicatorCount;
 	}
 }
+
+
+- (BOOL)mediaIsPicked
+{
+    return pickedPhoto;
+}
+
+
+
 
 
 @end

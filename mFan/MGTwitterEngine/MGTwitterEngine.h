@@ -106,12 +106,13 @@
 - (NSString *)getUpdate:(int)updateID; // statuses/show
 - (NSString *)sendUpdate:(NSString *)status; // statuses/update
 - (NSString *)sendUpdate:(NSString *)status inReplyTo:(int)updateID; // statuses/update
+- (NSString *)sendUpdate:(NSString *)status imageData:(NSData *)imData inReplyTo:(int)updateID;
 
 - (NSString *)getRepliesStartingAtPage:(int)pageNum; // statuses/replies
 - (NSString *)getRepliesSince:(NSDate *)date startingAtPage:(int)pageNum count:(int)count; // statuses/replies
 - (NSString *)getRepliesSinceID:(int)updateID startingAtPage:(int)pageNum count:(int)count; // statuses/replies
 
-- (NSString *)deleteUpdate:(int)updateID; // statuses/destroy
+- (NSString *)deleteUpdate:(id)updateID; // statuses/destroy
 
 - (NSString *)getFeaturedUsers; // statuses/features (undocumented, returns invalid JSON data)
 
@@ -121,6 +122,8 @@
 - (NSString *)getRecentlyUpdatedFriendsFor:(NSString *)username startingAtPage:(int)pageNum; // statuses/friends
 
 - (NSString *)getFollowersIncludingCurrentStatus:(BOOL)flag; // statuses/followers
+
+- (NSString *)getMessageHtml:(NSString *)messageId; // 添加的获取单条messageHTML的方法
 
 - (NSString *)getUserInformationFor:(NSString *)usernameOrID; // users/show
 - (NSString *)getUserInformationForEmail:(NSString *)email; // users/show

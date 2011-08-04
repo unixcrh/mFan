@@ -27,6 +27,7 @@
 #import <UIKit/UIKit.h>
 #import "TwitterConnectionProtocol.h"
 #import "MGConnectionWrap.h"
+#import "ImagePreview.h"
 
 
 @class MGTwitterEngine;
@@ -40,22 +41,26 @@ enum _TwitEditorSuspendedOperations
 
 
 
-
-@interface TwitEditorController : UIViewController  <UINavigationControllerDelegate,
-													UITextViewDelegate
+@interface TwitEditorController : UIViewController  <UINavigationControllerDelegate
+                                                    , UIImagePickerControllerDelegate
+													, UITextViewDelegate
 													, UIActionSheetDelegate
 													, MGConnectionDelegate
 													, UIAlertViewDelegate
 													> 
 {
-    
+    IBOutlet UIButton *pickImage;
     IBOutlet UIBarButtonItem *cancelButton;
     IBOutlet UIBarButtonItem *sendButton;
     IBOutlet UINavigationItem *navItem;
     IBOutlet UITextView *messageText;
     IBOutlet UILabel *charsCount;
+    IBOutlet UIImageView *imageView;
+    
+    
 	
 	BOOL			inTextEditingMode;
+    BOOL            isRT;
 
 	UIActionSheet *progressSheet;
 	UIColor *defaultTintColor;
@@ -72,6 +77,7 @@ enum _TwitEditorSuspendedOperations
 	int						_indicatorCount;
 	
 	BOOL					twitWasChangedManually;
+    UIImage*				pickedPhoto;
 
 }
 
@@ -81,7 +87,7 @@ enum _TwitEditorSuspendedOperations
 
 - (void)setRetwit:(NSString*)body whose:(NSString*)username;
 - (void)setReplyToMessage:(NSDictionary*)message;
-- (void)editUnsentMessage:(int)index;
+
 
 - (IBAction)postMessageSegmentedActions:(id)sender;
 
@@ -92,17 +98,25 @@ enum _TwitEditorSuspendedOperations
 - (void)textViewDidEndEditing:(UITextView *)textView;
 - (void)textViewDidBeginEditing:(UITextView *)textView;
 
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
+
 - (void)popController;
 
 
 - (void)retainActivityIndicator;
 - (void)releaseActivityIndicator;
 
+- (BOOL)mediaIsPicked;
+
+
+
+
 
 @property (nonatomic, retain) UIActionSheet *progressSheet;
-
+@property (nonatomic, retain) UIImage*		pickedPhoto;
 @property (nonatomic, retain) id <TwitterConnectionProtocol> connectionDelegate;
 @property (nonatomic, retain) NSDictionary *_message;
+@property (nonatomic, retain) UIImageView *imageView;
 
 
 @end

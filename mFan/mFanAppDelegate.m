@@ -49,17 +49,17 @@ static int NetworkActivityIndicatorCounter = 0;
     // **************  Test 1 Capacity ******
 	NSMutableArray *localViewControllersArray = [[NSMutableArray alloc] initWithCapacity:1];
      
-	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[HomeViewController class] nibName:nil tabIconName:@"HomeTabIcon.tiff" tabTitle:@"Home"];
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[HomeViewController class] nibName:nil tabIconName:@"HomeTabIcon.tiff" tabTitle:@"主页"];
 	[localViewControllersArray addObject:localNavigationController];
 	[localNavigationController  release];
 	if([MGTwitterEngine username] == nil)
 		[LoginController showModeless:localNavigationController animated:NO];
     
-    localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[RepliesListController class] nibName:@"UserMessageList" tabIconName:@"Replies.tiff" tabTitle:@"Replies"];
+    localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[RepliesListController class] nibName:@"UserMessageList" tabIconName:@"Replies.tiff" tabTitle:@"回复"];
 	[localViewControllersArray addObject:localNavigationController];
 	[localNavigationController release];
 	
-	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[DirectMessagesController class] nibName:@"UserMessageList" tabIconName:@"Messages.tiff" tabTitle:@"Messages"];
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[DirectMessagesController class] nibName:@"UserMessageList" tabIconName:@"Messages.tiff" tabTitle:@"私信"];
 	[localViewControllersArray addObject:localNavigationController];
 	[localNavigationController release];
 	
@@ -67,11 +67,11 @@ static int NetworkActivityIndicatorCounter = 0;
 	[localViewControllersArray addObject:localNavigationController];
 	[localNavigationController release]; */
     
-	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[FollowersController class] nibName:@"UserMessageList" tabIconName:@"followers.tiff" tabTitle:@"Followers"];
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[FollowersController class] nibName:@"UserMessageList" tabIconName:@"followers.tiff" tabTitle:@"被关注"];
 	[localViewControllersArray addObject:localNavigationController];
 	[localNavigationController release];
 	
-	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[FollowingController class] nibName:@"UserMessageList" tabIconName:@"following.tiff" tabTitle:@"Following"];
+	localNavigationController = [self createNavControllerWrappingViewControllerOfClass:[FollowingController class] nibName:@"UserMessageList" tabIconName:@"following.tiff" tabTitle:@"关注"];
 	[localViewControllersArray addObject:localNavigationController];
 	[localNavigationController release];
 	

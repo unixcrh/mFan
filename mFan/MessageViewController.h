@@ -50,6 +50,7 @@ enum _MessageViewSuspendedOperations
 
 	UIColor *defaultTintColor;
 	NSDictionary *_message;
+    NSString *textHTML;
 	
 	NSMutableDictionary *imagesLinks;
 	NSMutableArray *connectionsDelegates;
@@ -57,21 +58,22 @@ enum _MessageViewSuspendedOperations
 	UIActionSheet *progressSheet;
 
 	BOOL _isDirectMessage;
+    BOOL _isMakeHTML;
 	int _newLineCounter;
 	MGTwitterEngine *_twitter;
 }
 - (IBAction)nameSelected;
 - (IBAction)deleteTwit;
-- (void)forward;
 - (void)reTwit;
 - (void)reply;
 - (IBAction)segmentedActions:(id)sender;
 - (id)initWithMessage:(NSDictionary*)message;
 
-- (void)receivedImage:(UIImage*)image sender:(ImageDownoader*)sender;
+// - (void)receivedImage:(UIImage*)image sender:(ImageDownoader*)sender;
 // - (void)uploadedImage:(NSString*)yFrogURL sender:(ImageUploader*)sender;
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex;
 
 @property (nonatomic, retain) UIActionSheet *progressSheet;
+
 
 @end

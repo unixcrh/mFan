@@ -28,7 +28,7 @@
 #import "LoginController.h"
 #import "MGTwitterEngine.h"
 #import "ImageLoader.h"
-//#import "MessageViewController.h"
+#import "MessageViewController.h"
 #import "MessageListController.h"
 #import "TwitEditorController.h"
 #import "mFanAppDelegate.h"
@@ -52,7 +52,7 @@
 {
     [super viewDidLoad];
 
-	self.navigationItem.title = @"Tweetero Home";
+	self.navigationItem.title = @"饭否 首页";
 	
 	UIBarButtonItem *newMsgButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose
 		target:self action:@selector(newMessage)];
@@ -64,7 +64,7 @@
 	self.navigationItem.leftBarButtonItem = reloadButton;
 	[reloadButton release];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reload) name:@"TwittsUpdated" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reload) name:@"消息发送成功" object:nil];
 	if([MGTwitterEngine password] == nil)
 		[LoginController showModal:self.navigationController];
 }
@@ -95,12 +95,12 @@
 
 - (NSString*)noMessagesString
 {
-	return @"No Tweets";
+	return @"没有消息";
 }
 
 - (NSString*)loadingMessagesString
 {
-	return @"Loading Tweets...";
+	return @"载入消息...";
 }
 
 - (void)newMessage

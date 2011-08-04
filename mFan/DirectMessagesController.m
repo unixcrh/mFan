@@ -33,7 +33,7 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
-	self.navigationItem.title = @"Direct Messages";
+	self.navigationItem.title = @"私信";
 	
 	UIBarButtonItem *reloadButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
 		target:self action:@selector(reload)];
@@ -51,12 +51,12 @@
 
 - (NSString*)noMessagesString
 {
-	return @"No Direct Messages";
+	return @"没有私信";
 }
 
 - (NSString*)loadingMessagesString
 {
-	return @"Loading Direct Messages...";
+	return @"载入私信...";
 }
 
 - (void)loadMessagesStaringAtPage:(int)numPage count:(int)count

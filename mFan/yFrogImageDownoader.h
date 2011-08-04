@@ -39,7 +39,7 @@ typedef enum _ImageType
 
 @protocol ImageDownoaderDelegate<NSObject>
 
-- (void)receivedImage:(UIImage*)image sender:(ImageDownoader*)sender;
+// - (void)receivedImage:(UIImage*)image sender:(ImageDownoader*)sender;
 
 @end
 

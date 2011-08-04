@@ -408,6 +408,13 @@
 	[self.tableView reloadData];
 }
 
+NSInteger dateReverseSort(id num1, id num2, void *context)
+{
+	NSDate *d1 = [num1 objectForKey:@"created_at"];
+	NSDate *d2 = [num2 objectForKey:@"created_at"];
+	return [d2 compare:d1];
+}
+
 
 - (void)statusesReceived:(NSArray *)statuses forRequest:(NSString *)connectionIdentifier
 {
@@ -432,7 +439,11 @@
 		_messages = [[messages arrayByAddingObjectsFromArray:statuses] retain];
 		NSMutableArray *indices = [NSMutableArray arrayWithCapacity:[statuses count]];
 		for(int i = [messages count]; i < [_messages count]; ++i)
-			[indices addObject:[NSIndexPath indexPathForRow:i inSection:0]];
+        {
+            [indices addObject:[NSIndexPath indexPathForRow:i inSection:0]];
+            
+        }
+            
 			
 		@try
 		{
@@ -444,8 +455,8 @@
 				[self tableView:self.tableView numberOfRowsInSection:0],
 				_messages, statuses, indices);
 		}
-		
 		[messages release];
+
 	}
 	
 	[self releaseActivityIndicator];
@@ -455,12 +466,7 @@
 }
 
 
-NSInteger dateReverseSort(id num1, id num2, void *context)
-{
-	NSDate *d1 = [num1 objectForKey:@"created_at"];
-	NSDate *d2 = [num2 objectForKey:@"created_at"];
-	return [d2 compare:d1];
-}
+
 
 - (void)directMessagesReceived:(NSArray *)statuses forRequest:(NSString *)connectionIdentifier;
 {

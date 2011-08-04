@@ -24,66 +24,13 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-#import "RepliesListController.h"
-#import "MGTwitterEngine.h"
-#import "mFanAppDelegate.h"
+#import <UIKit/UIKit.h>
 
-@implementation RepliesListController
 
-- (id)initWithUserName:(NSString*)user
+@interface ImagePreview : UIImageView 
 {
-	self = [super initWithNibName:@"UserMessageList" bundle:nil];
-	if(self)
-		_user = [user retain];
-		
-	return self;
 }
 
-- (void)viewDidLoad 
-{
-    [super viewDidLoad];
-	self.navigationItem.title = NSLocalizedString(@"回复", @"");
-	
-	UIBarButtonItem *reloadButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
-		target:self action:@selector(reload)];
-	self.navigationItem.leftBarButtonItem = reloadButton;
-	[reloadButton release];
-}
 
-- (void)accountChanged:(NSNotification*)notification
-{
-	[self reloadAll];
-}
-
-- (NSString*)noMessagesString
-{
-	return NSLocalizedString(@"没有回复", @""); 
-}
-
-- (NSString*)loadingMessagesString
-{
-	return NSLocalizedString(@"载入回复...", @"");
-}
-
-- (void)loadMessagesStaringAtPage:(int)numPage count:(int)count
-{
-	[super loadMessagesStaringAtPage:numPage count:count];
-	if([MGTwitterEngine password] != nil)
-	{
-		[_twitter getRepliesSince:nil startingAtPage:numPage count:count];
-		self.navigationItem.title = [MGTwitterEngine username];
-	}
-}
-
-- (void)reload
-{
-	[self reloadAll];
-}
-
-- (void)dealloc
-{
-	[_user release];
-	[super dealloc];
-}
 
 @end

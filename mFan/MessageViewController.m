@@ -52,6 +52,7 @@
 		suspendedOperation = noMVOperations;
 		NSNumber *isDirectMessage = [_message objectForKey:@"DirectMessage"];
 		_isDirectMessage = isDirectMessage && [isDirectMessage boolValue];
+        _isMakeHTML = YES;
 		_twitter = [[MGTwitterEngine alloc] initWithDelegate:self];
     }
     return self;
@@ -60,16 +61,18 @@
 
 - (IBAction)nameSelected 
 {
-    UserInfo *infoView = [[UserInfo alloc] initWithUserName:[[_message objectForKey:@"user"] objectForKey:@"screen_name"]];
+    UserInfo *infoView = [[UserInfo alloc] initWithUserName:[[_message objectForKey:@"user"] objectForKey:@"id"]];
 	[self.navigationController pushViewController:infoView animated:YES];
 	[infoView release];
 }
 
-- (NSString*)makeHTMLMessage
+- (NSString *)makeHTMLMessage
 {
+    
 	NSString *text = [_message objectForKey:@"text"];
 	NSString *html;
 	
+    
 	NSArray *lines = [text componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	NSString *line;
 	_newLineCounter = [lines count];
@@ -111,11 +114,33 @@
 					word = [NSString  stringWithFormat:@"<br><a href=%@><img src=%@.th.jpg></a><br>", yFrogURL, yFrogURL];
 					_newLineCounter += 6;
 				}
-			}
-			else if([word hasPrefix:@"@"] && [word length] > 1)
+			} else if ([word rangeOfString:@"http://"].location != NSNotFound)
+            {
+                NSRange r1 = [word rangeOfString:@"http://"];
+                NSString *urlstr = [word substringFromIndex:r1.location];
+                NSString *wordstr = [word substringToIndex:r1.location];
+                
+                word = [NSString stringWithFormat:@"%@<a href=%@>%@</a>",wordstr,urlstr,urlstr];
+                
+            }
+			/*else if([word hasPrefix:@"@"] && [word length] > 1)
 			{
-				word = [NSString  stringWithFormat:@" <a href=user://%@>%@</a> ", [word substringFromIndex:1], word];
-			}
+                NSRange r = [word rangeOfString:@"："];
+                if (r.location != NSNotFound) {
+                    NSString* idword = [word substringToIndex:r.location - 1];
+                    NSString* msword = [word substringFromIndex:r.location];
+                    word = [NSString  stringWithFormat:@" <a href=user://%@>%@</a>%@ ",idword, idword,msword];
+                } else {
+                    word = [NSString  stringWithFormat:@" <a href=user://%@>%@</a> ", [word substringFromIndex:1], word];
+                }
+				
+			} 
+            else if ([word hasPrefix:@"转@"] && [word length] > 2)
+            {
+                NSRange r = [word rangeOfString:@"@"];
+                NSString* idword = [word substringFromIndex:r.location + 1];
+                word = [NSString stringWithFormat:@" 转<a href=user://%@>%@</a> ", idword,[word substringFromIndex:1]];
+            }*/
 			
 			[filteredWords addObject:word];
 		}
@@ -158,9 +183,8 @@
 		calendar= [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 			
 	NSDictionary *userData = [_message objectForKey:@"user"];
-	
-	[textField loadHTMLString:[self makeHTMLMessage] baseURL:nil];
-	textField.scalesPageToFit = NO;
+    
+        
 	//Set message date and time
 	NSCalendarUnit unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSDate *createdAt = [_message objectForKey:@"created_at"];
@@ -198,6 +222,25 @@
 		
 	[avatarView setImage:[[ImageLoader sharedLoader] imageWithURL:[userData objectForKey:@"profile_image_url"]] forState:UIControlStateNormal];
 	[nameField setTitle: [userData objectForKey:@"screen_name"] forState:UIControlStateNormal];
+    
+    
+    if (_isDirectMessage)
+    {
+        [textField loadHTMLString:[self makeHTMLMessage] baseURL:nil];
+        textField.scalesPageToFit = NO;
+    } else {
+        NSString *messageId = [_message objectForKey:@"id"];
+        [mFanAppDelegate increaseNetworkActivityIndicator];
+        [_twitter getMessageHtml:messageId];
+    }
+    
+   
+    
+    
+    
+    
+     
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -256,16 +299,8 @@
 		return YES;
 
 	NSString *url = [[request URL] absoluteString];
-	NSString *yFrogURL = ValidateYFrogLink(url);
-	/*if(yFrogURL)
-	{
-        ImageViewController *imgViewCtrl = [[ImageViewController alloc] initWithYFrogURL:yFrogURL];
-        imgViewCtrl.originalMessage = _message;
-        [self.navigationController pushViewController:imgViewCtrl animated:YES];
-        [imgViewCtrl release];
-		
-	}
-	else if([url hasPrefix:@"user://"])
+	
+    if([url hasPrefix:@"user://"])
 	{
 		NSString *user = [[url substringFromIndex:7] stringByTrimmingCharactersInSet:[NSCharacterSet punctuationCharacterSet]];
 		UserInfo *infoView = [[UserInfo alloc] initWithUserName:user];
@@ -277,7 +312,7 @@
 		UIViewController *webViewCtrl = [[WebViewController alloc] initWithRequest:request];
 		[self.navigationController pushViewController:webViewCtrl animated:YES];
 		[webViewCtrl release];
-	}*/
+	}
 	
 	return NO;
 }
@@ -393,8 +428,8 @@
 
 - (IBAction)deleteTwit
 {
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Do you wish to delete this tweet?" message:@"This operation cannot be undone"
-												   delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"你真的想删除这个消息吗？ " message:@"这个操作无法撤销"
+												   delegate:self cancelButtonTitle:@"取消删除" otherButtonTitles:@"确认删除", nil];
 	[alert show];
 	[alert release];
 }
@@ -404,15 +439,24 @@
 	if(buttonIndex > 0)
 	{
 		[mFanAppDelegate increaseNetworkActivityIndicator];
-		[_twitter deleteUpdate:[[_message objectForKey:@"id"] intValue]];
+		[_twitter deleteUpdate:[_message objectForKey:@"id"]];
 	}
 }
 
 - (void)requestSucceeded:(NSString *)connectionIdentifier
 {
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"TwittsUpdated" object: nil];
-	[mFanAppDelegate decreaseNetworkActivityIndicator];
-	[self.navigationController popViewControllerAnimated:YES];
+    if (!_isMakeHTML){
+        [[NSNotificationCenter defaultCenter] postNotificationName: @"消息发送成功" object: nil];
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    
+    
+    [mFanAppDelegate decreaseNetworkActivityIndicator];
+    
+    if (_isDirectMessage) {
+        _isDirectMessage = NO;
+    }
+	
 }
 
 
@@ -423,5 +467,25 @@
 	if(self.tabBarController.selectedViewController == self.navigationController && [error code] == 401)
 		[LoginController showModal:self.navigationController];
 }
+
+- (void)statusesReceived:(NSArray *)statuses forRequest:(NSString *)connectionIdentifier
+{
+    NSDictionary *msgData = [statuses objectAtIndex:0];
+    NSString *str = [msgData objectForKey:@"text"];
+    NSMutableString *info = [NSMutableString stringWithCapacity:256];
+    [info appendFormat:@"<html></script></head><body style=\"width:%d; overflow:visible; padding:0; margin:0\"><big>",(int)textField.frame.size.width - 10];
+    [info appendString:str];
+    [info appendString:@"<br>"];
+    [info appendString:@"</big></body></html>"];
+    
+    [textField loadHTMLString:info baseURL:nil];
+    textField.scalesPageToFit = NO;
+    
+}
+
+		
+	
+
+
 
 @end

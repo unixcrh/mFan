@@ -58,12 +58,12 @@
 
 - (NSString*)noMessagesString
 {
-	return @"No Tweets";
+	return @"没有消息";
 }
 
 - (NSString*)loadingMessagesString
 {
-	return @"Loading Tweets...";
+	return @"载入消息...";
 }
 
 @end

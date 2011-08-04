@@ -24,66 +24,45 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-#import "RepliesListController.h"
-#import "MGTwitterEngine.h"
-#import "mFanAppDelegate.h"
+#import "ImagePreview.h"
 
-@implementation RepliesListController
 
-- (id)initWithUserName:(NSString*)user
+
+@implementation ImagePreview
+
+
+- (id)initWithFrame:(CGRect)frame 
 {
-	self = [super initWithNibName:@"UserMessageList" bundle:nil];
-	if(self)
-		_user = [user retain];
-		
-	return self;
-}
-
-- (void)viewDidLoad 
-{
-    [super viewDidLoad];
-	self.navigationItem.title = NSLocalizedString(@"回复", @"");
-	
-	UIBarButtonItem *reloadButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
-		target:self action:@selector(reload)];
-	self.navigationItem.leftBarButtonItem = reloadButton;
-	[reloadButton release];
-}
-
-- (void)accountChanged:(NSNotification*)notification
-{
-	[self reloadAll];
-}
-
-- (NSString*)noMessagesString
-{
-	return NSLocalizedString(@"没有回复", @""); 
-}
-
-- (NSString*)loadingMessagesString
-{
-	return NSLocalizedString(@"载入回复...", @"");
-}
-
-- (void)loadMessagesStaringAtPage:(int)numPage count:(int)count
-{
-	[super loadMessagesStaringAtPage:numPage count:count];
-	if([MGTwitterEngine password] != nil)
+    if (self == [super initWithFrame:frame]) 
 	{
-		[_twitter getRepliesSince:nil startingAtPage:numPage count:count];
-		self.navigationItem.title = [MGTwitterEngine username];
+        self.userInteractionEnabled = YES;
+    }
+    return self;
+}
+
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event 
+{ 
+	NSSet *allTouches = [event allTouches];
+
+	if([allTouches count] == 1)
+	{
+		UITouch *touch = [[allTouches allObjects] objectAtIndex:0];
+		if([touch tapCount] == 1)
+		{
+			if(self.image)
+			{
+				[[NSNotificationCenter defaultCenter] postNotificationName:@"ImageViewTouched" object:self];
+			}
+		}
 	}
 }
 
-- (void)reload
+- (void)dealloc 
 {
-	[self reloadAll];
+    [super dealloc];
 }
 
-- (void)dealloc
-{
-	[_user release];
-	[super dealloc];
-}
+
 
 @end

@@ -56,6 +56,9 @@
 #define DEFAULT_TWEET_COUNT		20
 
 
+
+
+
 static NSString *_username;
 static NSString *_password;
 
@@ -64,6 +67,7 @@ static NSString *_password;
 // Utility methods
 - (NSDateFormatter *)_HTTPDateFormatter;
 - (NSString *)_queryStringWithBase:(NSString *)base parameters:(NSDictionary *)params prefixed:(BOOL)prefixed;
+- (NSString *)_queryStringImageWithBase:(NSString *)base parameters:(NSDictionary *)params prefixed:(BOOL)prefixed;
 - (NSDate *)_HTTPToDate:(NSString *)httpDate;
 - (NSString *)_dateToHTTP:(NSDate *)date;
 - (NSString *)_encodeString:(NSString *)string;
@@ -75,6 +79,12 @@ static NSString *_password;
                                 body:(NSString *)body 
                          requestType:(MGTwitterRequestType)requestType 
                         responseType:(MGTwitterResponseType)responseType;
+
+- (NSString *)_uploadRequestWithMethod:(NSString *)method 
+                                  path:(NSString *)path 
+                       queryParameters:(NSDictionary *)params 
+                           requestType:(MGTwitterRequestType)requestType 
+                          responseType:(MGTwitterResponseType)responseType;
 
 // Parsing methods
 - (void)_parseDataForConnection:(MGTwitterHTTPURLConnection *)connection;
@@ -488,6 +498,36 @@ static NSMutableDictionary *createBaseDictionary(NSString *server, NSString *acc
     return str;
 }
 
+- (NSString *)_queryStringImageWithBase:(NSString *)base parameters:(NSDictionary *)params prefixed:(BOOL)prefixed
+{
+    // Append base if specified.
+    NSMutableString *str = [NSMutableString stringWithCapacity:0];
+    if (base) {
+        [str appendString:base];
+    }
+    
+    NSString *boundary = @"----Boundary+Whatever----data--done";
+   
+    // Append each name-value pair.
+    if (params) {
+        for (NSString *key in [params allKeys]) {
+            [str appendString:[NSString stringWithFormat:@"\r\n--%@\r\n",boundary]];
+            
+            id currentValue = [params objectForKey:key];
+            
+            if ([currentValue isKindOfClass:[NSData class]]) {
+                [str appendString:[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpeg\"\r\n",key]];
+                [str appendString:@"Content-Type: image/jpeg\r\n"];
+                [str appendString:@"Content-Transfer-Encoding: binary\r\n\r\n"];
+            }
+        }               
+            
+        
+    }
+    
+    return str;
+}
+
 
 - (NSDate *)_HTTPToDate:(NSString *)httpDate
 {
@@ -658,6 +698,147 @@ static NSMutableDictionary *createBaseDictionary(NSString *server, NSString *acc
         if (finalBody) {
             [theRequest setHTTPBody:[finalBody dataUsingEncoding:NSUTF8StringEncoding]];
         }
+    }
+    
+    
+    // Create a connection using this request, with the default timeout and caching policy, 
+    // and appropriate Twitter request and response types for parsing and error reporting.
+    MGTwitterHTTPURLConnection *connection;
+    connection = [[MGTwitterHTTPURLConnection alloc] initWithRequest:theRequest 
+                                                            delegate:self 
+                                                         requestType:requestType 
+                                                        responseType:responseType];
+    
+    if (!connection) {
+        return nil;
+    } else {
+        [_connections setObject:connection forKey:[connection identifier]];
+        [connection release];
+    }
+    
+    return [connection identifier];
+}
+
+
+- (NSString *)_uploadRequestWithMethod:(NSString *)method 
+                                path:(NSString *)path 
+                     queryParameters:(NSDictionary *)params 
+                         requestType:(MGTwitterRequestType)requestType 
+                        responseType:(MGTwitterResponseType)responseType
+{
+    // Construct appropriate URL string.
+    NSString *fullPath = path;
+    NSMutableData *d = [NSMutableData data];
+    if (params) 
+    {
+        // Append base if specified.
+        NSString *boundary = @"----Boundary+Whatever----data--done";
+        
+        // Append each name-value pair.
+        for (NSString *key in [params allKeys]) 
+        {
+            [d appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+                
+            id currentValue = [params objectForKey:key];
+                
+            if ([currentValue isKindOfClass:[NSData class]]) {
+                [d appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpeg\"\r\n",key] dataUsingEncoding:NSUTF8StringEncoding]];
+                [d appendData:[@"Content-Type: image/jpeg\r\n" dataUsingEncoding:NSASCIIStringEncoding]];
+                [d appendData:[@"Content-Transfer-Encoding: binary\r\n\r\n" dataUsingEncoding:NSASCIIStringEncoding]];
+                [d appendData:currentValue];
+            } 
+            else{
+                [d appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+                [d appendData:[@"Content-Disposition: form-data; name=\"status\"\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+                [d appendData:[[NSString stringWithFormat:@"%@",currentValue] dataUsingEncoding:NSUTF8StringEncoding]];
+            }
+        }
+        [d appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    
+#if YAJL_AVAILABLE
+	NSString *domain = nil;
+	NSString *connectionType = nil;
+	if (requestType == MGTwitterSearchRequest)
+	{
+		domain = _searchDomain;
+		connectionType = @"http";
+	}
+	else
+	{
+		domain = _APIDomain;
+		if (_secureConnection)
+		{
+			connectionType = @"http";
+		}
+		else
+		{
+			connectionType = @"http";
+		}
+	}
+#else
+	NSString *domain = _APIDomain;
+	NSString *connectionType = nil;
+	if (_secureConnection)
+	{
+		connectionType = @"http";
+	}
+	else
+	{
+		connectionType = @"http";
+	}
+#endif
+	
+#if SET_AUTHORIZATION_IN_HEADER
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@/%@", 
+                           connectionType,
+                           domain, fullPath];
+#else    
+    NSString *urlString = [NSString stringWithFormat:@"%@://%@:%@@%@/%@", 
+                           connectionType, 
+                           [self _encodeString:_username], [self _encodeString:_password], 
+                           domain, fullPath];
+#endif
+    
+    NSURL *finalURL = [NSURL URLWithString:urlString];
+    if (!finalURL) {
+        return nil;
+    }
+    
+    // Construct an NSMutableURLRequest for the URL and set appropriate request method.
+    NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:finalURL 
+                                                              cachePolicy:NSURLRequestReloadIgnoringCacheData 
+                                                          timeoutInterval:URL_REQUEST_TIMEOUT];
+    if (method) {
+        [theRequest setHTTPMethod:method];
+    }
+    [theRequest setHTTPShouldHandleCookies:NO];
+    
+    NSString *boundary = @"----Boundary+Whatever----data--done";
+    
+    // Set headers for client information, for tracking purposes at Twitter.
+    [theRequest setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary] forHTTPHeaderField:@"Content-Type"];
+    
+    
+
+    
+#if SET_AUTHORIZATION_IN_HEADER
+	if ([MGTwitterEngine username] && [MGTwitterEngine password]) {
+		// Set header for HTTP Basic authentication explicitly, to avoid problems with proxies and other intermediaries
+		NSString *authStr = [NSString stringWithFormat:@"%@:%@", [MGTwitterEngine username], [MGTwitterEngine password]];
+		NSData *authData = [authStr dataUsingEncoding:NSASCIIStringEncoding];
+		NSString *authValue = [NSString stringWithFormat:@"Basic %@", [authData base64EncodingWithLineLength:80]];
+		[theRequest setValue:authValue forHTTPHeaderField:@"Authorization"];
+	}
+#endif
+    
+    // Set the request body if this is a POST request.
+    BOOL isPOST = (method && [method isEqualToString:HTTP_POST_METHOD]);
+    if (isPOST) {
+        // Set request body, if specified (hopefully so), with 'source' parameter if appropriate
+        
+        [theRequest setHTTPBody:d];
+        
     }
     
     
@@ -1198,6 +1379,14 @@ static NSMutableDictionary *createBaseDictionary(NSString *server, NSString *acc
 
 #pragma mark Retrieving updates
 
+- (NSString *)getMessageHtml:(NSString *)messageId
+{
+    NSString *path = [NSString stringWithFormat:@"statuses/show/%@.%@?format=html",messageId,API_FORMAT];
+    
+    return [self _sendRequestWithMethod:nil path:path queryParameters:nil body:nil requestType:MGTwitterStatusesRequest responseType:MGTwitterStatus];
+}
+
+
 
 - (NSString *)getFollowedTimelineFor:(NSString *)username since:(NSDate *)date startingAtPage:(int)pageNum
 {
@@ -1230,6 +1419,7 @@ static NSMutableDictionary *createBaseDictionary(NSString *server, NSString *acc
                             requestType:MGTwitterStatusesRequest 
                            responseType:MGTwitterStatuses];
 }
+
 
 
 - (NSString *)getFollowedTimelineFor:(NSString *)username sinceID:(int)updateID startingAtPage:(int)pageNum count:(int)count
@@ -1352,7 +1542,7 @@ static NSMutableDictionary *createBaseDictionary(NSString *server, NSString *acc
 
 - (NSString *)getRepliesSince:(NSDate *)date startingAtPage:(int)pageNum count:(int)count
 {
-	NSString *path = [NSString stringWithFormat:@"statuses/replies.%@", API_FORMAT];
+    NSString *path = [NSString stringWithFormat:@"statuses/mentions.%@", API_FORMAT];
     
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:0];
     if (date) {
@@ -1367,9 +1557,10 @@ static NSMutableDictionary *createBaseDictionary(NSString *server, NSString *acc
 	}
 	[params setObject:[NSString stringWithFormat:@"%d", tweetCount] forKey:@"count"];
     
-    return [self _sendRequestWithMethod:nil path:path queryParameters:params body:nil 
-                            requestType:MGTwitterStatusesRequest 
-                           responseType:MGTwitterStatuses];
+    return  [self _sendRequestWithMethod:nil path:path queryParameters:params body:nil 
+                                      requestType:MGTwitterStatusesRequest 
+                                     responseType:MGTwitterStatuses]; 
+    
 }
 
 
@@ -1632,10 +1823,36 @@ static NSMutableDictionary *createBaseDictionary(NSString *server, NSString *acc
                            responseType:MGTwitterStatus];
 }
 
-
-- (NSString *)deleteUpdate:(int)updateID
+- (NSString *)sendUpdate:(NSString *)status imageData:(NSData *)imData inReplyTo:(int)updateID
 {
-    NSString *path = [NSString stringWithFormat:@"statuses/destroy/%d.%@", updateID, API_FORMAT];
+    if (!status && !imData) {
+        return nil;
+    }
+    
+    NSString *path = [NSString stringWithFormat:@"photos/upload.%@", API_FORMAT];
+    
+    NSString *trimmedText = status;
+    if ([trimmedText length] > MAX_MESSAGE_LENGTH) {
+        trimmedText = [trimmedText substringToIndex:MAX_MESSAGE_LENGTH];
+    }
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:0];
+    [params setObject:trimmedText forKey:@"status"];
+    [params setObject:imData forKey:@"photo"];
+    if (updateID > 0) {
+        [params setObject:[NSString stringWithFormat:@"%d", updateID] forKey:@"in_reply_to_status_id"];
+    }
+    /*NSString *body = [self _queryStringImageWithBase:nil parameters:params prefixed:NO];*/
+    
+    return [self _uploadRequestWithMethod:HTTP_POST_METHOD path:path 
+                        queryParameters:params requestType:MGTwitterStatusSend 
+                           responseType:MGTwitterStatus];
+}
+
+
+- (NSString *)deleteUpdate:(id)updateID
+{
+    NSString *path = [NSString stringWithFormat:@"statuses/destroy/%@.%@", updateID, API_FORMAT];
     
     return [self _sendRequestWithMethod:HTTP_POST_METHOD path:path queryParameters:nil body:nil 
                             requestType:MGTwitterAccountRequest 
